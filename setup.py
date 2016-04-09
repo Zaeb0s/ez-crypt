@@ -1,7 +1,8 @@
 #!/bin/env python3
 
-from setuptools import setup
 import sys
+
+from setuptools import setup
 
 pack_name = 'ezcrypt'
 
@@ -31,8 +32,6 @@ elif sys.argv[-1] == 'huge':
 
 
 version = '.'.join(version)
-with open(pack_name + '/version', 'w') as f:
-    f.write(version)
 
 setup(
     name=pack_name,
@@ -53,5 +52,7 @@ setup(
 
     install_requires=['pycrypto']
 )
+with open(pack_name + '/version', 'w') as f:
+    f.write(version)
 
 print('Installed version: ' + version)
