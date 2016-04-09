@@ -48,17 +48,34 @@ decrypted = encrypted.decrypt(key, iv)
 
 
 ## JavaScript side
-Download and include the required components from crypto-js (aes.js, mode-cfb.js, pad-nopadding-min.js). 
-Can be downloaded from :http://crypto-js.googlecode.com/svn/tags/3.1.2/src/ 
+Download and include the required components from crypto-js (aes.js, mode-cfb.js, pad-nopadding-min.js)
+```sh
+npm install crypto-js
+```
+Or using html:
+```html
+    <script src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/components//aes-min.js"></script>
+    <script src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/components//mode-cfb-min.js"></script>
+    <script src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/components//pad-nopadding-min.js"></script> 
+```
+
+
 ```javascript
-//Encryption
-string = 'Hello, world'
+CryptoJS = require('crypto-js')
+
 // Key and iv are both initially two hexstrings
 // Convert them using CryptoJS.enc.Hex.parse
+key = '4806baf70a60107c026979e9036f9dd9' 
+iv = '37c4bc628f415daf31441b6594ef1622'
+
+
+//Encryption
+string = 'Hello, world'
+
 key = CryptoJS.enc.Hex.parse(key);
 iv = CryptoJS.enc.Hex.parse(iv);
 
-encrypted = CryptoJS.AES.encrypt(
+var encrypted_hex_string = CryptoJS.AES.encrypt(
                 string,
                 key,
                 {
@@ -66,9 +83,13 @@ encrypted = CryptoJS.AES.encrypt(
                     padding: CryptoJS.pad.Pkcs7,
                     mode: CryptoJS.mode.CFB
                 }).ciphertext.toString();
-                
+
 // Decryption
-decrypted = CryptoJS.AES.decrypt(
+var encrypted = CryptoJS.lib.CipherParams.create({
+            ciphertext: CryptoJS.enc.Hex.parse(encrypted_hex_string)
+            })
+            
+var decrypted = CryptoJS.AES.decrypt(
                 encrypted,
                 key,
                 {
@@ -76,4 +97,9 @@ decrypted = CryptoJS.AES.decrypt(
                     padding: CryptoJS.pad.Pkcs7,
                     mode: CryptoJS.mode.CFB
                 }).toString(CryptoJS.enc.Utf8);
+                
+console.log('String: ' + string)
+console.log('Encrypted: ' + encrypted_hex_string)
+console.log('Decrypted: ' + decrypted)
 ```
+
