@@ -9,6 +9,10 @@ use mode: CryptoJS.mode.CFB
     a 16 byte key and a 16 byte iv
 """
 
+_DEFAULT_MODE = AES.MODE_CFB
+_DEFAULT_SEGMENT_SIZE = 128
+_DEFAULT_PADDING = True
+_DEFAULT_PADDING_SIZE = 16
 
 def _bytes2int(data):
     """ Converts bytes list/string to unsigned decimal """
