@@ -6,7 +6,7 @@ from setuptools import setup
 
 pack_name = 'ezcrypt'
 
-from psss import __version__
+from ezcrypt import __version__
 
 
 def readme():
