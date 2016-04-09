@@ -54,15 +54,18 @@ npm install crypto-js
 ```
 Or using html:
 ```html
-    <script src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/components//aes-min.js"></script>
-    <script src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/components//mode-cfb-min.js"></script>
-    <script src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/components//pad-nopadding-min.js"></script> 
+<script src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/components/core-min.js"></script>
+<script src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/components/cipher-core-min.js"></script>
+<script src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/components/aes-min.js"></script>
+<script src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/components/mode-cfb-min.js"></script>
 ```
 
 
 ```javascript
-CryptoJS = require('crypto-js')
-
+// If using node
+if (typeof require !== 'undefined') {
+    CryptoJS = require('crypto-js')
+}
 // Key and iv are both initially two hexstrings
 // Convert them using CryptoJS.enc.Hex.parse
 key = '4806baf70a60107c026979e9036f9dd9' 
@@ -102,4 +105,3 @@ console.log('String: ' + string)
 console.log('Encrypted: ' + encrypted_hex_string)
 console.log('Decrypted: ' + decrypted)
 ```
-
