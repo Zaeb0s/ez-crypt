@@ -48,7 +48,7 @@ decrypted = encrypted.decrypt(key, iv)
 
 
 ## JavaScript side
-Download and include the required components from crypto-js (aes.js, mode-cfb.js, pad-nopadding-min.js)
+Download and include the required components from crypto-js (core.js, cipher-core.js, aes.js, mode-cfb.js)
 ```sh
 npm install crypto-js
 ```
@@ -59,7 +59,6 @@ Or using html:
 <script src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/components/aes-min.js"></script>
 <script src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/components/mode-cfb-min.js"></script>
 ```
-
 
 ```javascript
 // If using node
