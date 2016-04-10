@@ -2,17 +2,24 @@ from hashlib import sha256
 
 from Crypto import Random
 from Crypto.Cipher import AES
+from Crypto.Util import Counter
 
 """Encrypts/decrypts data for the CryptoJS JavaScript module
 use mode: CryptoJS.mode.CFB
     padding: CryptoJS.pad.Pkcs7
     a 16 byte key and a 16 byte iv
+
+    Does not currently work with AES.MODE_CTR
 """
 
 _DEFAULT_MODE = AES.MODE_CFB
 _DEFAULT_SEGMENT_SIZE = 128
 _DEFAULT_PADDING = True
 _DEFAULT_PADDING_SIZE = 16
+_DEFAULT_COUNTER = Counter
+_DEFAULT_KEY_LENGTH = 16
+_DEFAULT_IV_LENGTH = 16
+
 
 def _bytes2int(data):
     """ Converts bytes list/string to unsigned decimal """
@@ -31,26 +38,23 @@ def _str2hex(string):
     return _int2bytes(_hex, int(len(string)/2))
 
 
-def generate_key_iv():
-    keyiv = Random.get_random_bytes(32)
-    return keyiv[:16], keyiv[16:]
+def generate_key_iv(key_length=_DEFAULT_KEY_LENGTH, iv_length=_DEFAULT_IV_LENGTH):
+    return Random.get_random_bytes(key_length), Random.get_random_bytes(iv_length)
 
 
 def _unpad_bytes(data):
     """Remove the PKCS#7 padding from a bytearray"""
     pad_size = data[-1]
-    if pad_size > len(data):
-        raise ValueError('Input is not padded or padding is corrupt')
     return data[:len(data) - pad_size]
 
 
-def _pad_bytes(data, max_pad_size=16):
+def _pad_bytes(data, max_pad_size=_DEFAULT_PADDING_SIZE):
     """Pad an input string according to PKCS#7"""
-    pad_size = max_pad_size- (len(data) % max_pad_size)
+    pad_size = max_pad_size - (len(data) % max_pad_size)
     return data.ljust(len(data) + pad_size, pad_size.to_bytes(1, 'big'))
 
 
-def decrypt(data, key, iv, mode=AES.MODE_CFB, segment_size=128, unpad=True):
+def decrypt(data, key, iv, mode=_DEFAULT_MODE, segment_size=_DEFAULT_SEGMENT_SIZE, unpad=_DEFAULT_PADDING):
     aes = AES.new(key, mode, iv, segment_size=segment_size)
     decrypted = aes.decrypt(data)
     if unpad:
@@ -58,7 +62,7 @@ def decrypt(data, key, iv, mode=AES.MODE_CFB, segment_size=128, unpad=True):
     return decrypted
 
 
-def encrypt(data, key, iv, mode=AES.MODE_CFB, segment_size=128, pad=True):
+def encrypt(data, key, iv, mode=_DEFAULT_MODE, segment_size=_DEFAULT_SEGMENT_SIZE, pad=_DEFAULT_PADDING):
     aes = AES.new(key, mode, iv, segment_size=segment_size)
     if pad:
         return aes.encrypt(_pad_bytes(data))
@@ -66,18 +70,16 @@ def encrypt(data, key, iv, mode=AES.MODE_CFB, segment_size=128, pad=True):
 
 
 def sha256hash(data):
-    if hasattr(data, 'encode'):
-        data = data.encode()
     return sha256(data).digest()
 
 
 class Crypt:
     def __init__(self,
-                 key=Random.get_random_bytes(16),
-                 iv=Random.get_random_bytes(16),
-                 mode=AES.MODE_CFB,
-                 segment_size=128,
-                 use_padding=True):
+                 key=Random.get_random_bytes(_DEFAULT_KEY_LENGTH),
+                 iv=Random.get_random_bytes(_DEFAULT_IV_LENGTH),
+                 mode=_DEFAULT_MODE,
+                 segment_size=_DEFAULT_SEGMENT_SIZE,
+                 use_padding=_DEFAULT_PADDING):
         self.key = key
         self.iv = iv
         self.mode = mode
@@ -90,40 +92,30 @@ class Crypt:
     def decrypt(self, data):
         return decrypt(data, self.key, self.iv, self.mode, self.segment_size, self.use_padding)
 
-    def new_key_iv(self):
-        self.key, self.iv = generate_key_iv()
+    def new_key_iv(self, key_length=_DEFAULT_KEY_LENGTH, iv_length=_DEFAULT_IV_LENGTH):
+        self.key, self.iv = generate_key_iv(key_length, iv_length)
+        return self.key, self.iv
 
 
 class CryptString(str):
-    def encrypt(self, key, iv, mode=AES.MODE_CFB, segment_size=128, pad=True):
+    def encrypt(self, key, iv, mode=_DEFAULT_MODE, segment_size=_DEFAULT_SEGMENT_SIZE, pad=_DEFAULT_PADDING):
         return CryptString(encrypt(self.encode(), key, iv, mode, segment_size, pad).hex())
 
-    def decrypt(self, key, iv, mode=AES.MODE_CFB, segment_size=128, unpad=True, encoding='utf-8'):
+    def decrypt(self, key, iv, mode=_DEFAULT_MODE, segment_size=_DEFAULT_SEGMENT_SIZE,
+                unpad=_DEFAULT_PADDING, encoding='utf-8'):
         return CryptString(decrypt(_str2hex(self), key, iv, mode, segment_size, unpad).decode(encoding))
 
-    def sha256hash(self, return_hexstring=True):
-        hash = sha256hash(self.encode())
-        if return_hexstring:
-            return hash.hex()
-        return hash
+    def sha256hash(self):
+        return sha256hash(self.encode())
 
 
 class CryptBytes(bytes):
-    def encrypt(self, key, iv, mode=AES.MODE_CFB, segment_size=128, pad=True):
+    def encrypt(self, key, iv, mode=_DEFAULT_MODE, segment_size=_DEFAULT_SEGMENT_SIZE, pad=_DEFAULT_PADDING):
         return CryptBytes(encrypt(self, key, iv, mode, segment_size, pad))
 
-    def decrypt(self, key, iv, mode=AES.MODE_CFB, segment_size=128, unpad=True):
+    def decrypt(self, key, iv, mode=_DEFAULT_MODE, segment_size=_DEFAULT_SEGMENT_SIZE,
+                unpad=_DEFAULT_PADDING):
         return CryptBytes(decrypt(self, key, iv, mode, segment_size, unpad))
 
     def sha256hash(self):
         return sha256hash(self)
-
-if __name__ == '__main__':
-    _key, _iv = generate_key_iv()
-    string = b'Hello, world!'
-    x = CryptBytes(string)
-
-    encrypted = x.encrypt(_key, _iv)
-    print(encrypted)
-    decrypted = encrypted.decrypt(_key, _iv)
-    print(decrypted)

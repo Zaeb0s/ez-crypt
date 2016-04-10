@@ -32,13 +32,15 @@ elif sys.argv[-1] == 'huge':
 
 
 version = '.'.join(version)
+with open(pack_name + '/version', 'w') as f:
+    f.write(version)
 
 setup(
     name=pack_name,
-    packages=[pack_name], # this must be the same as the name above
+    packages=[pack_name],
     version=version,
     include_package_data=True,
-#    license='MIT',
+    license='MIT',
     description='A helper for encrypting bytes',
     long_description=readme(),
     author='Christoffer Zakrisson',
@@ -52,7 +54,6 @@ setup(
 
     install_requires=['pycrypto']
 )
-with open(pack_name + '/version', 'w') as f:
-    f.write(version)
+
 
 print('Installed version: ' + version)
