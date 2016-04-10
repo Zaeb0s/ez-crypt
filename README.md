@@ -66,17 +66,16 @@ if (typeof require !== 'undefined') {
     CryptoJS = require('crypto-js')
 }
 // Key and iv are both initially two hexstrings of lengths 32
-key = '4806baf70a60107c026979e9036f9dd9' 
-iv = '37c4bc628f415daf31441b6594ef1622'
+var key = '4806baf70a60107c026979e9036f9dd9',
+    iv = '37c4bc628f415daf31441b6594ef1622'
 
 // Convert them using CryptoJS.enc.Hex.parse
 key = CryptoJS.enc.Hex.parse(key);
 iv = CryptoJS.enc.Hex.parse(iv);
 
 //Encryption
-string = 'Hello, world'
-
-var encrypted_hex_string = CryptoJS.AES.encrypt(
+var string = 'Hello, world',
+    encrypted_hex_string = CryptoJS.AES.encrypt(
                 string,
                 key,
                 {
@@ -90,9 +89,8 @@ var encrypted_hex_string = CryptoJS.AES.encrypt(
 // Convert the hex string
 var encrypted = CryptoJS.lib.CipherParams.create({
             ciphertext: CryptoJS.enc.Hex.parse(encrypted_hex_string)
-            })
-            
-var decrypted = CryptoJS.AES.decrypt(
+            }),        
+    decrypted = CryptoJS.AES.decrypt(
                 encrypted,
                 key,
                 {
@@ -104,4 +102,5 @@ var decrypted = CryptoJS.AES.decrypt(
 console.log('String: ' + string)
 console.log('Encrypted: ' + encrypted_hex_string)
 console.log('Decrypted: ' + decrypted)
+
 ```
