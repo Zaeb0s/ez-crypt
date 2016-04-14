@@ -61,4 +61,7 @@ target/
 #Ipython Notebook
 .ipynb_checkpoints
 
+ez-crypt-py/.idea/*
+ez-crypt-js/.idea/*
 .idea/*
+ez-crypt-js/node_modules
