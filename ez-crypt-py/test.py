@@ -72,3 +72,17 @@ print('Encrypted:', encrypted)
 print('Decrypted:', decrypted)
 print('Hash:', hash)
 
+print()
+print('Testing RSA...')
+from ezcrypt import RSA
+t1 = time()
+key = RSA.generate_key(1024)
+cipher = RSA.cipher(key)
+data = b'Hello, world!'
+encrypted = cipher.encrypt(data)
+decrypted = cipher.decrypt(encrypted)
+print('Time:', (time()-t1)*1000, 'ms')
+print('Privkey:', key.exportKey())
+print('Pubkey:', key.publickey().exportKey())
+print('Encrypted:', encrypted)
+print('Decrypted:', decrypted)

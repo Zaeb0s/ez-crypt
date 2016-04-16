@@ -1,8 +1,9 @@
-from hashlib import sha256
-
 from Crypto import Random
 from Crypto.Cipher import AES
+from Crypto.Cipher import PKCS1_OAEP
+from Crypto.PublicKey import RSA, pubkey
 from Crypto.Util import Counter
+from hashlib import sha256
 
 """Encrypts/decrypts data for the CryptoJS JavaScript module
 use mode: CryptoJS.mode.CFB
@@ -19,7 +20,7 @@ _DEFAULT_PADDING_SIZE = 16
 _DEFAULT_COUNTER = Counter
 _DEFAULT_KEY_LENGTH = 16
 _DEFAULT_IV_LENGTH = 16
-t
+
 
 def _bytes2int(data):
     """ Converts bytes list/string to unsigned decimal """
@@ -91,7 +92,7 @@ class Crypt:
 
     def decrypt(self, data):
         return decrypt(data, self.key, self.iv, self.mode, self.segment_size, self.use_padding)
-a
+
     def new_key_iv(self, key_length=_DEFAULT_KEY_LENGTH, iv_length=_DEFAULT_IV_LENGTH):
         self.key, self.iv = generate_key_iv(key_length, iv_length)
         return self.key, self.iv
@@ -119,3 +120,80 @@ class CryptBytes(bytes):
 
     def sha256hash(self):
         return sha256hash(self)
+
+
+class _RSA:
+
+    generate_key = RSA.generate
+    cipher = PKCS1_OAEP.new
+    import_key = RSA.importKey
+
+    # @staticmethod
+    # def cipher(key):
+    #     """
+    #     Used for encryption/decryption
+    #     """
+    #     return PKCS1_OAEP.new(key)
+    #
+    # @staticmethod
+    # def generate_key(bits=2048, e=65537):
+    #     """
+    #     Generate an RSA keypair with an exponent of 65537 in PEM format
+    #     param: bits The key length in bits
+    #     Return private key and public key
+    #     """
+    #     return RSA.generate(bits, e=e)
+
+    # @staticmethod
+    # def import_key(string):
+    #     return RSA.importKey(string)
+
+    @staticmethod
+    def key_to_int(key):
+        return _bytes2int(key.exportKey('DER'))
+
+    @staticmethod
+    def int_to_key(integer, key_length):
+        return _int2bytes(integer, key_length)
+
+    @staticmethod
+    def key_from_file(file):
+        with open(file, 'r') as f:
+            RSA.importKey(f.read())
+
+if __name__ == '__main__':
+
+    key1 = _RSA.generate_key()
+    key2 = _RSA.generate_key()
+
+    cipher1 = _RSA.cipher(key1)
+    cipher2 = _RSA.cipher(key2)
+
+    message = b'Attack at dawn!'
+    encrypted = cipher2.encrypt(message)
+    decrypted = cipher2.decrypt(encrypted)
+
+    print('Encrypted:', encrypted)
+    print('Decrypted:', decrypted)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

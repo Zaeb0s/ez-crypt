@@ -43,3 +43,13 @@ encrypted = string.encrypt(key, iv)
 decrypted = encrypted.decrypt(key, iv)
 ```
 
+## RSA encryption
+```python
+from ezcrypt import RSA
+key = RSA.generate_key(bits=1024)
+cipher = RSA.cipher(key)
+data = b'Hello, world!'
+encrypted = cipher.encrypt(data)
+decrypted = cipher.decrypt(encrypted)
+```
+Importing and generating a key done using pycryptos RSA functions [RSA.generate](https://www.dlitz.net/software/pycrypto/api/current/Crypto.PublicKey.RSA-module.html#generate) and [RSA.importKey](https://www.dlitz.net/software/pycrypto/api/current/Crypto.PublicKey.RSA-module.html#importKey)
