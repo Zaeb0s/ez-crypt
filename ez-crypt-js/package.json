@@ -1,6 +1,6 @@
 {
   "name": "ez-crypt",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "Works with ez-crypt python module",
   "main": "ezcrypt.js",
   "repository": {
@@ -12,6 +12,7 @@
   "author": "Christoffer Zakrisson <christoffer_zakrisson@hotmail.com> (https://github.com/Zaeb0s)",
   "license": "MIT",
   "dependencies": {
-    "crypto-js": "^3.1.6"
+    "crypto-js": "^3.1.6",
+    "node-forge": "^0.6.39"
   }
 }
