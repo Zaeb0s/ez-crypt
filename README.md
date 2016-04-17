@@ -48,15 +48,32 @@ decrypted = encrypted.decrypt(key, iv)
 ```
 
 ## RSA encryption
+The RSA class is just a collection of pycrypto modules with some extra data/key handling functionality. 
 ```python
 from ezcrypt import RSA
-key = RSA.generate_key(bits=1024)
+# Generating RSA key pair
+private_key = RSA.generate(bits=1024)
+public_key = private_key.publickey()
+
+# Encrypting a message
 cipher = RSA.cipher(key)
 data = b'Hello, world!'
 encrypted = cipher.encrypt(data)
+
+# Decrypting a message
 decrypted = cipher.decrypt(encrypted)
+
+# Importing key
+key1 = RSA.importKey(string) # From string
+key2 = RSA.key_from_file(path) # From file
+key3 = RSA.key_from_int(integer) # From integer
+
+# Exporting key
+string = key.exportKey() # To string
+integer = RSA.key_to_int(key) # To int
 ```
 Generating and importing keys are done using pycryptos RSA functions [RSA.generate](https://www.dlitz.net/software/pycrypto/api/current/Crypto.PublicKey.RSA-module.html#generate) and [RSA.importKey](https://www.dlitz.net/software/pycrypto/api/current/Crypto.PublicKey.RSA-module.html#importKey).
+Exporting keys are done using [key.exportKey()](https://www.dlitz.net/software/pycrypto/api/current/Crypto.PublicKey.RSA._RSAobj-class.html#exportKey).
 
 # JavaScript side
 ## Installation

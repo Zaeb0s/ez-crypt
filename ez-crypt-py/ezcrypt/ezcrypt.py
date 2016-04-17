@@ -1,7 +1,8 @@
 from Crypto import Random
 from Crypto.Cipher import AES
 from Crypto.Cipher import PKCS1_OAEP
-from Crypto.PublicKey import RSA, pubkey
+from Crypto.PublicKey import RSA as Crypto_RSA
+from Crypto.PublicKey import pubkey
 from Crypto.Util import Counter
 from hashlib import sha256
 
@@ -27,7 +28,10 @@ def _bytes2int(data):
     return int.from_bytes(data, byteorder='big')
 
 
-def _int2bytes(data, size):
+def _int2bytes(data, size=None):
+    if size is None:
+        return data.to_bytes((data.bit_length() + 7) // 8, 'big') or b'\0'
+
     return data.to_bytes(size, byteorder='big')
 
 
@@ -122,52 +126,40 @@ class CryptBytes(bytes):
         return sha256hash(self)
 
 
-class _RSA:
+class RSA:
 
-    generate_key = RSA.generate
+    generate = Crypto_RSA.generate
     cipher = PKCS1_OAEP.new
-    import_key = RSA.importKey
+    importKey = Crypto_RSA.importKey
+    construct = Crypto_RSA.construct
 
-    # @staticmethod
-    # def cipher(key):
-    #     """
-    #     Used for encryption/decryption
-    #     """
-    #     return PKCS1_OAEP.new(key)
-    #
-    # @staticmethod
-    # def generate_key(bits=2048, e=65537):
-    #     """
-    #     Generate an RSA keypair with an exponent of 65537 in PEM format
-    #     param: bits The key length in bits
-    #     Return private key and public key
-    #     """
-    #     return RSA.generate(bits, e=e)
-
-    # @staticmethod
-    # def import_key(string):
-    #     return RSA.importKey(string)
+    # For backwards compatibility
+    generate_key = Crypto_RSA.generate
+    import_key = Crypto_RSA.importKey
 
     @staticmethod
     def key_to_int(key):
         return _bytes2int(key.exportKey('DER'))
 
     @staticmethod
-    def int_to_key(integer, key_length):
-        return _int2bytes(integer, key_length)
+    def ket_from_int(integer):
+        return RSA.importKey(_int2bytes(integer))
 
     @staticmethod
     def key_from_file(file):
         with open(file, 'r') as f:
             RSA.importKey(f.read())
 
+
 if __name__ == '__main__':
 
-    key1 = _RSA.generate_key()
-    key2 = _RSA.generate_key()
+    key1 = RSA.generate(1024)
+    key2 = RSA.generate(1024)
 
-    cipher1 = _RSA.cipher(key1)
-    cipher2 = _RSA.cipher(key2)
+    privkey = RSA.importKey(key1.exportKey())
+    pubkey = RSA.importKey(key1.publickey().exportKey())
+    cipher1 = RSA.cipher(key1)
+    cipher2 = RSA.cipher(key2)
 
     message = b'Attack at dawn!'
     encrypted = cipher2.encrypt(message)
@@ -177,7 +169,14 @@ if __name__ == '__main__':
     print('Decrypted:', decrypted)
 
 
-
+    # for i in range(1000):
+    #     key1 = RSA.generate(1024*2)
+    #     int_key = RSA.key_to_int(key1)
+    #     key2 = RSA.int_to_key(int_key)
+    #
+    #     if key1.exportKey() != key2.exportKey():
+    #         raise ValueError('Keys are not identical')
+    #     print(i, 'done', key1 == key2)
 
 
 

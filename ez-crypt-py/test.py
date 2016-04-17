@@ -76,7 +76,7 @@ print()
 print('Testing RSA...')
 from ezcrypt import RSA
 t1 = time()
-key = RSA.generate_key(1024)
+key = RSA.generate(1024)
 cipher = RSA.cipher(key)
 data = b'Hello, world!'
 encrypted = cipher.encrypt(data)
