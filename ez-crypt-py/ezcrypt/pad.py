@@ -6,6 +6,11 @@ METHOD_ISO10126 = 2
 METHOD_PKCS7 = 3
 METHOD_ISO_IEC7816_4 = 4
 
+__all__ = [
+    'METHOD_ANSIX_923', 'METHOD_ISO10126', 'METHOD_PKCS7', 'METHOD_ISO_IEC7816_4',
+    'pad', 'unpad'
+]
+
 
 def pad(data, block_size=16, type=METHOD_PKCS7):
     pad_size = block_size - (len(data) % block_size)

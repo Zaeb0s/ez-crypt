@@ -7,7 +7,7 @@
 
 import ezcrypt.AES as AES
 import ezcrypt.RSA as RSA
-
+import ezcrypt.pad as Padding
 
 with open(__path__[0] + '/version', 'r') as r:
     __version__ = r.read()
