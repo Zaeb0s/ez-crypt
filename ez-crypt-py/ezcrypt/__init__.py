@@ -1,6 +1,13 @@
-#!/bin/env python3
-from .ezcrypt import RSA
-from .ezcrypt import encrypt, decrypt, CryptBytes, CryptString, Crypt, sha256hash, generate_key_iv
+# Encrypts/decrypts data for the CryptoJS JavaScript module
+# use mode: CryptoJS.mode.CFB
+# padding: CryptoJS.pad.Pkcs7
+# a 16 byte key and a 16 byte iv
+# Does not currently work with AES.MODE_CTR
+
+
+import ezcrypt.AES as AES
+import ezcrypt.RSA as RSA
+
 
 with open(__path__[0] + '/version', 'r') as r:
     __version__ = r.read()

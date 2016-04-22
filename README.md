@@ -2,6 +2,7 @@
 A python module for AES that works well together with the javascripts CryptoJS.
 
 # Python side
+The python code mainly uses [pycrypto](https://pypi.python.org/pypi/pycrypto)
 ## Installation
 ```sh
 pip install ezcrypt
